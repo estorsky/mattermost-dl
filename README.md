@@ -359,6 +359,7 @@ if you're on Unix-based platform with Bourne shell and [jq](https://github.com/s
 Notably,
 
 - `read-channel.sh` will format message contents to the terminal as basic viewer (not necessarily with all possible information)
+- `to_html.py` (Python 3, no dependencies) renders the archive into static offline HTML - `index.html` with channel list and one page per channel with inline images, threads and reactions: `python3 scripts/to_html.py <archive-dir> [<html-dir>]`
 - `to-discord-tracker.sh` will perform lossy conversion to format used by [Discord History Tracker](https://github.com/chylex/Discord-History-Tracker)'s archives, a project of similar intent that comes with offline HTML based archive viewer
 
 ### Why does download of long channel with certain time constraints take such long time to start?
