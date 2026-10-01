@@ -71,6 +71,8 @@ class Time:
         return self._time
     def __eq__(self, other: 'Time'):
         return self._time == other._time
+    def __hash__(self):
+        return hash(self._time)
     def __lt__(self, other: 'Time'):
         return self._time < other._time
     # Needed to silence linter

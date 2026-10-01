@@ -38,6 +38,8 @@ class OrderDirection(Enum):
 
 @dataclass
 class ChannelOptions:
+    __hash__ = object.__hash__
+
     postsAfterId: Optional[Id] = None
     postsBeforeId: Optional[Id] = None
     postsBeforeTime: Optional[Time] = None

@@ -112,7 +112,16 @@ class MattermostDriver:
         if id in self.cache.users:
             return self.cache.users[id]
 
-        userInfo = self.get('users/'+id)
+        try:
+            userInfo = self.get('users/'+id)
+        except requests.HTTPError as e:
+            # Users purged from the server still appear in old direct channels and posts
+            if e.response is None or e.response.status_code != 404:
+                raise
+            logging.warning(f"User '{id}' no longer exists on server, using placeholder.")
+            userInfo = {'id': id, 'username': f'deleted-{id}', 'nickname': '', 'first_name': '',
+                'last_name': '', 'create_at': 0, 'update_at': 0, 'delete_at': 0, 'position': '',
+                'roles': 'system_user'}
         assert isinstance(userInfo, dict)
         u = User.fromMattermost(userInfo)
         self.cache.users.update({u.id: u})
@@ -162,7 +171,7 @@ class MattermostDriver:
     def loadChannels(self, teamId: Id = None):
         if not teamId:
             teamId = Id(self.context['teamId'])
-        channelInfos = self.get(f'users/{{userId}}/teams/{teamId}/channels')
+        channelInfos = self.get(f'users/{{userId}}/teams/{teamId}/channels', params={'include_deleted': 'true'})
         t = self.cache.teams[teamId]
         assert isinstance(channelInfos, list)
         for chInfo in channelInfos:

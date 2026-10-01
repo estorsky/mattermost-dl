@@ -15,6 +15,9 @@ class RecoveryAction:
     def __eq__(self, other: 'RecoveryAction') -> bool:
         return type(self) == type(other)
 
+    def __hash__(self) -> int:
+        return hash(type(self))
+
 class RSkipDownload(RecoveryAction):
     '''
         Download is not performed.

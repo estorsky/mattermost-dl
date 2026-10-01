@@ -14,6 +14,8 @@ class VisualizationMode(Enum):
 
 @dataclass
 class ProgressSettings:
+    __hash__ = object.__hash__
+
     mode: VisualizationMode = VisualizationMode.AnsiEscapes
     forceMode: bool = False
 

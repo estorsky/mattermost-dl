@@ -13,6 +13,7 @@ from .store import ChannelFileInfo, ChannelHeader, PostOrdering, PostStorage
 
 import json
 from mimetypes import guess_extension
+import requests
 
 @dataclass
 class ChannelRequest:
@@ -263,9 +264,16 @@ class Saver:
                 hasFolder = True
 
             suffix = getSuffixHint(entity)
-            storeFilename(entity, self.storeFile(
-                url=url, filename=filename, directoryName=dirName,
-                suffix=suffix, redownload=redownload))
+            try:
+                storedName = self.storeFile(
+                    url=url, filename=filename, directoryName=dirName,
+                    suffix=suffix, redownload=redownload)
+            except requests.HTTPError as e:
+                if e.response is None or e.response.status_code not in (403, 404):
+                    raise
+                logging.warning(f"Skipping {entitiesName} '{filename}', server responded {e.response.status_code}.")
+                continue
+            storeFilename(entity, storedName)
 
             if showProgressReport:
                 reporter.update(str(i+1))
